@@ -185,4 +185,3 @@ document.addEventListener('DOMContentLoaded', () => {
          console.error("Erro: Elemento 'whatsappBtn' não encontrado.");
     }
 });
-
