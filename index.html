@@ -28,7 +28,7 @@
     <form id="calcForm" class="space-y-6">
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- vCPU -->
+
         <div>
           <label class="block text-sm font-medium mb-1">vCPU</label>
           <input type="number" class="item qty-vcpu w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="vCPU" data-price="">
@@ -36,7 +36,6 @@
           <p class="mt-1 text-sm total" data-name="vCPU">Total: R$ 0,00</p>
         </div>
 
-        <!-- Memória -->
         <div>
           <label class="block text-sm font-medium mb-1">Memória</label>
           <input type="number" class="item qty w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Memória">
@@ -44,12 +43,57 @@
           <p class="mt-1 text-sm total" data-name="Memória">Total: R$ 0,00</p>
         </div>
 
-        <!-- Disco -->
         <div>
           <label class="block text-sm font-medium mb-1">Disco</label>
           <input type="number" class="item qty w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Disco">
           <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Disco">
           <p class="mt-1 text-sm total" data-name="Disco">Total: R$ 0,00</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Licença VMware</label>
+          <input type="number" class="item qty-vmware w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Licença VMware" readonly>
+          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Licença VMware">
+          <p class="mt-1 text-sm total" data-name="Licença VMware">Total: R$ 0,00</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Licença Windows</label>
+          <input type="number" class="item qty w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Licença Windows">
+          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Licença Windows">
+          <p class="mt-1 text-sm total" data-name="Licença Windows">Total: R$ 0,00</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Licença Backup</label>
+          <input type="number" class="item qty w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Licença Backup">
+          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Licença Backup">
+          <p class="mt-1 text-sm total" data-name="Licença Backup">Total: R$ 0,00</p>
+        </div>
+      </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Licença SQL</label>
+          <input type="number" class="item qty w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Licença SQL">
+          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Licença SQL">
+          <p class="mt-1 text-sm total" data-name="Licença SQL">Total: R$ 0,00</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Cloud Backup</label>
+          <input type="number" class="item qty w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Cloud Backup">
+          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Cloud Backup">
+          <p class="mt-1 text-sm total" data-name="Cloud Backup">Total: R$ 0,00</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Link Redundante</label>
+          <input type="number" class="item qty w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Link Redundante">
+          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Link Redundante">
+          <p class="mt-1 text-sm total" data-name="Link Redundante">Total: R$ 0,00</p>
         </div>
       </div>
 
