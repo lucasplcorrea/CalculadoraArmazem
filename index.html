@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculadora de Custos Cloud</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#1B3664',
+            secondary: '#00A859',
+            darkbg: '#0f172a',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-darkbg text-white min-h-screen p-6">
+
+  <div class="max-w-5xl mx-auto bg-primary p-8 rounded-xl shadow-lg">
+    <h1 class="text-3xl font-bold mb-6 text-center text-white">🧮 Calculadora de Custos Cloud</h1>
+
+    <form id="calcForm" class="space-y-6">
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- vCPU -->
+        <div>
+          <label class="block text-sm font-medium mb-1">vCPU</label>
+          <input type="number" class="item qty-vcpu w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="vCPU" data-price="">
+          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="vCPU">
+          <p class="mt-1 text-sm total" data-name="vCPU">Total: R$ 0,00</p>
+        </div>
+
+        <!-- Memória -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Memória</label>
+          <input type="number" class="item qty w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Memória">
+          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Memória">
+          <p class="mt-1 text-sm total" data-name="Memória">Total: R$ 0,00</p>
+        </div>
+
+        <!-- Disco -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Disco</label>
+          <input type="number" class="item qty w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Disco">
+          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Disco">
+          <p class="mt-1 text-sm total" data-name="Disco">Total: R$ 0,00</p>
+        </div>
+      </div>
+
+    </form>
+
+    <!-- Total Geral -->
+    <div class="mt-6 text-center text-xl font-bold bg-secondary text-darkbg p-4 rounded">
+      Total da VM: <span id="grandTotal">R$ 0,00</span>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
