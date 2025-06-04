@@ -1,6 +1,9 @@
 let vmCounter = 0;
 const globalUnitPrices = {}; // Store global unit prices like Link, IPv4
 
+// Ensure jsPDF is loaded before using it
+const { jsPDF } = window.jspdf;
+
 function formatCurrency(value) {
     const numericValue = typeof value === 'number' ? value : parseFloat(value) || 0;
     return numericValue.toLocaleString("pt-BR", {
@@ -184,63 +187,6 @@ function calculateTotals() {
 
 // --- Generate Content for Export --- 
 
-function generateHtmlForPdf() {
-    let html = `<html><head><meta charset="UTF-8"><title>Orçamento Cloud</title></head><body>`;
-    html += `<h1>Orçamento Estimado - Armazém Cloud</h1>`;
-
-    const ambiente = document.getElementById('ambienteNovo').checked ? 'Novo' : 'Existente';
-    html += `<h2>Configurações Gerais</h2><ul><li><strong>Tipo de Ambiente:</strong> ${ambiente}</li></ul>`;
-
-    html += `<h2>Máquinas Virtuais</h2>`;
-    const vmBlocks = document.querySelectorAll('#vmContainer .vm-block');
-    vmBlocks.forEach((vmBlock, index) => {
-        const vmId = index + 1;
-        const vcpu = vmBlock.querySelector('.qty-vcpu').value || 0;
-        const memoria = vmBlock.querySelector('.item.qty[data-name="Memória"]').value || 0;
-        const disco = vmBlock.querySelector('.qty-disco').value || 0;
-        const os = vmBlock.querySelector('.osSelect').value;
-        const veeam = vmBlock.querySelector('.qty-veeam').checked ? 'Sim' : 'Não';
-        const retencao = vmBlock.querySelector('.backup-retencao').checked ? 'Sim' : 'Não';
-        const frequencia = vmBlock.querySelector('.backup-frequencia').checked ? 'Sim' : 'Não';
-
-        html += `<div class="vm-block">`;
-        html += `<h3>Máquina Virtual ${vmId}</h3><ul>`;
-        html += `<li><strong>Sistema Operacional:</strong> ${os.charAt(0).toUpperCase() + os.slice(1)}</li>`;
-        html += `<li><strong>vCPU:</strong> ${vcpu}</li>`;
-        html += `<li><strong>Memória:</strong> ${memoria} GB</li>`;
-        html += `<li><strong>Disco:</strong> ${disco} GB</li>`;
-        html += `<li><strong>Licença Veeam:</strong> ${veeam}</li>`;
-        html += `<li><strong>Backup Customizado:</strong> Retenção > 15d (${retencao}), Frequência < 12h (${frequencia})</li>`;
-        html += `</ul></div>`;
-    });
-
-    html += `<h2>Serviços Adicionais</h2><ul>`;
-    const servicos = document.querySelectorAll('.servico-adicional:checked');
-    if (servicos.length > 0) {
-        servicos.forEach(s => {
-            html += `<li>${s.dataset.name} (${formatCurrency(s.value)})</li>`;
-        });
-    } else {
-        html += `<li>Nenhum serviço adicional selecionado.</li>`;
-    }
-    html += `</ul>`;
-
-    html += `<div class="summary-section"><h2>Resumo de Custos Mensais</h2>`;
-    html += `<p><strong>Custo Total VMs (Base):</strong> ${document.getElementById('custoTotalVms').textContent}</p>`;
-    html += `<p><strong>Custo Licenças (VMware/Windows):</strong> ${document.getElementById('custoTotalLicencas').textContent}</p>`;
-    html += `<p><strong>Custo Backup (Área + Veeam + Custom):</strong> ${document.getElementById('custoTotalBackup').textContent}</p>`;
-    html += `<p><strong>Custo Conectividade (Link + IP):</strong> ${document.getElementById('custoTotalConectividade').textContent}</p>`;
-    html += `<p><strong>Custo Serviços Adicionais:</strong> ${document.getElementById('custoTotalServicos').textContent}</p>`;
-    if (document.getElementById('ambienteNovo').checked) {
-         html += `<p><strong>Custo Implementação (Pagamento Único):</strong> ${document.getElementById('custoTotalImplementacao').textContent}</p>`;
-    }
-    html += `<p class="grand-total"><strong>Custo Total Mensal Estimado:</strong> ${document.getElementById('grandTotal').textContent}</p>`;
-    html += `</div>`;
-
-    html += `</body></html>`;
-    return html;
-}
-
 function generateWhatsAppMessage() {
     let message = "Olá! Gostaria de um orçamento para a seguinte configuração de VM(s) no Armazém Cloud:\n\n";
     const ambiente = document.getElementById('ambienteNovo').checked ? 'Novo' : 'Existente';
@@ -283,21 +229,98 @@ function generateWhatsAppMessage() {
     return encodeURIComponent(message);
 }
 
-// Function to trigger PDF generation (called by button click)
-async function triggerPdfGeneration() {
-    const pdfHtmlContent = generateHtmlForPdf();
-    // This function will now just signal the main agent process
-    // In a real web app, this would be an API call.
-    // Here, we'll log it to the console for the agent to pick up.
-    console.log("PDF_GENERATION_REQUESTED");
-    console.log(pdfHtmlContent); // Log the HTML content
-    // Provide feedback to the user
-    const exportPdfBtn = document.getElementById('exportPdfBtn');
-    if(exportPdfBtn) {
-        exportPdfBtn.disabled = true;
-        exportPdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando PDF...';
+// Function to generate PDF using jsPDF
+function generatePdfWithJsPDF() {
+    const doc = new jsPDF();
+    let y = 15; // Initial Y position
+    const lineHeight = 7;
+    const indent = 10;
+    const pageHeight = doc.internal.pageSize.height;
+
+    function checkPageBreak(lines = 1) {
+        if (y + (lines * lineHeight) > pageHeight - 20) { // Check if content exceeds page height (with margin)
+            doc.addPage();
+            y = 15; // Reset Y for new page
+        }
     }
-    alert("Solicitação de PDF enviada. O agente irá gerar o arquivo e enviá-lo em breve.");
+
+    doc.setFontSize(18);
+    doc.text("Orçamento Estimado - Armazém Cloud", doc.internal.pageSize.width / 2, y, { align: 'center' });
+    y += lineHeight * 2;
+
+    doc.setFontSize(14);
+    doc.text("Configurações Gerais", indent, y);
+    y += lineHeight;
+    doc.setFontSize(10);
+    const ambiente = document.getElementById('ambienteNovo').checked ? 'Novo' : 'Existente';
+    doc.text(`- Tipo de Ambiente: ${ambiente}`, indent + 5, y);
+    y += lineHeight * 2;
+
+    doc.setFontSize(14);
+    doc.text("Máquinas Virtuais", indent, y);
+    y += lineHeight;
+    doc.setFontSize(10);
+    const vmBlocks = document.querySelectorAll('#vmContainer .vm-block');
+    vmBlocks.forEach((vmBlock, index) => {
+        checkPageBreak(8); // Estimate lines per VM block
+        const vmId = index + 1;
+        const vcpu = vmBlock.querySelector('.qty-vcpu').value || 0;
+        const memoria = vmBlock.querySelector('.item.qty[data-name="Memória"]').value || 0;
+        const disco = vmBlock.querySelector('.qty-disco').value || 0;
+        const os = vmBlock.querySelector('.osSelect').value;
+        const veeam = vmBlock.querySelector('.qty-veeam').checked ? 'Sim' : 'Não';
+        const retencao = vmBlock.querySelector('.backup-retencao').checked ? 'Sim' : 'Não';
+        const frequencia = vmBlock.querySelector('.backup-frequencia').checked ? 'Sim' : 'Não';
+
+        doc.setFontSize(12);
+        doc.text(`Máquina Virtual ${vmId}`, indent + 5, y);
+        y += lineHeight;
+        doc.setFontSize(10);
+        doc.text(`- Sistema Operacional: ${os.charAt(0).toUpperCase() + os.slice(1)}`, indent + 10, y); y += lineHeight;
+        doc.text(`- vCPU: ${vcpu}`, indent + 10, y); y += lineHeight;
+        doc.text(`- Memória: ${memoria} GB`, indent + 10, y); y += lineHeight;
+        doc.text(`- Disco: ${disco} GB`, indent + 10, y); y += lineHeight;
+        doc.text(`- Licença Veeam: ${veeam}`, indent + 10, y); y += lineHeight;
+        doc.text(`- Backup Custom: Retenção>15d (${retencao}), Frequência<12h (${frequencia})`, indent + 10, y); y += lineHeight * 1.5;
+    });
+
+    checkPageBreak(3 + document.querySelectorAll('.servico-adicional:checked').length);
+    doc.setFontSize(14);
+    doc.text("Serviços Adicionais", indent, y);
+    y += lineHeight;
+    doc.setFontSize(10);
+    const servicos = document.querySelectorAll('.servico-adicional:checked');
+    if (servicos.length > 0) {
+        servicos.forEach(s => {
+            checkPageBreak();
+            doc.text(`- ${s.dataset.name} (${formatCurrency(s.value)})`, indent + 5, y); y += lineHeight;
+        });
+    } else {
+        doc.text("- Nenhum serviço adicional selecionado.", indent + 5, y); y += lineHeight;
+    }
+    y += lineHeight;
+
+    checkPageBreak(8); // Estimate lines for summary
+    doc.setFontSize(14);
+    doc.text("Resumo de Custos Mensais", indent, y);
+    y += lineHeight;
+    doc.setFontSize(10);
+    doc.text(`- Custo Total VMs (Base): ${document.getElementById('custoTotalVms').textContent}`, indent + 5, y); y += lineHeight;
+    doc.text(`- Custo Licenças (VMware/Windows): ${document.getElementById('custoTotalLicencas').textContent}`, indent + 5, y); y += lineHeight;
+    doc.text(`- Custo Backup (Área + Veeam + Custom): ${document.getElementById('custoTotalBackup').textContent}`, indent + 5, y); y += lineHeight;
+    doc.text(`- Custo Conectividade (Link + IP): ${document.getElementById('custoTotalConectividade').textContent}`, indent + 5, y); y += lineHeight;
+    doc.text(`- Custo Serviços Adicionais: ${document.getElementById('custoTotalServicos').textContent}`, indent + 5, y); y += lineHeight;
+    if (document.getElementById('ambienteNovo').checked) {
+        checkPageBreak();
+        doc.text(`- Custo Implementação (Pagamento Único): ${document.getElementById('custoTotalImplementacao').textContent}`, indent + 5, y); y += lineHeight;
+    }
+    y += lineHeight * 0.5;
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.text(`Custo Total Mensal Estimado: ${document.getElementById('grandTotal').textContent}`, indent + 5, y);
+    doc.setFont(undefined, 'normal');
+
+    doc.save('orcamento-armazem-cloud.pdf');
 }
 
 
@@ -344,8 +367,8 @@ function attachGlobalEventListeners() {
 
     const exportPdfBtn = document.getElementById('exportPdfBtn');
     if (exportPdfBtn) {
-        // Changed to call the trigger function
-        exportPdfBtn.addEventListener('click', triggerPdfGeneration);
+        // Changed to call the jsPDF function directly
+        exportPdfBtn.addEventListener('click', generatePdfWithJsPDF);
     }
 }
 
