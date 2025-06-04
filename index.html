@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Calculadora de Custos Cloud</title>
+  <title>Calculadora de Custos Cloud - Armazém Cloud</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -20,135 +20,131 @@
     }
   </script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    /* Estilo para destacar cada bloco de VM */
+    .vm-block {
+      border: 1px solid #374151; /* gray-700 */
+      padding: 1.5rem; /* p-6 */
+      border-radius: 0.75rem; /* rounded-xl */
+      margin-bottom: 1.5rem; /* mb-6 */
+      background-color: #1f2937; /* gray-800 */
+      position: relative; /* Para posicionar o botão de remover */
+    }
+    .remove-vm-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background-color: #ef4444; /* red-500 */
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: 0.8rem;
+        line-height: 1.5rem; /* Centraliza o ícone */
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .remove-vm-btn:hover {
+        background-color: #dc2626; /* red-600 */
+    }
+  </style>
 </head>
 <body class="bg-darkbg text-white min-h-screen p-6">
 
   <div class="max-w-5xl mx-auto bg-primary p-8 rounded-xl shadow-lg">
-    <h1 class="text-3xl font-bold mb-6 text-center text-white">🧮 Calculadora de Custos Cloud</h1>
+    <h1 class="text-3xl font-bold mb-6 text-center text-white">🧮 Calculadora de Custos Cloud - Armazém Cloud</h1>
 
-    <form id="calcForm" class="space-y-6">
-
-      <!-- Seção de Presets -->
-      <div class="border-b border-gray-700 pb-6 mb-6">
-          <label for="presetSelect" class="block text-xl font-semibold mb-2 text-white">Selecionar Preset</label>
-          <select id="presetSelect" class="w-full p-2 rounded bg-gray-800 border border-gray-600 text-white focus:ring-secondary focus:border-secondary">
-              <option value="">-- Selecione um Preset --</option>
-              <option value="win1">Preset 1 - Windows (4 vCPU, 8GB RAM, 200GB SSD, 10 Mbps)</option>
-              <option value="win2">Preset 2 - Windows (6 vCPU, 12GB RAM, 250GB SSD, 12 Mbps)</option>
-              <option value="win3">Preset 3 - Windows (8 vCPU, 16GB RAM, 350GB SSD, 15 Mbps)</option>
-              <option value="lin1">Preset 1 - Linux (4 vCPU, 8GB RAM, 200GB SSD, 10 Mbps)</option>
-              <option value="lin2">Preset 2 - Linux (6 vCPU, 12GB RAM, 250GB SSD, 12 Mbps)</option>
-              <option value="lin3">Preset 3 - Linux (8 vCPU, 16GB RAM, 350GB SSD, 15 Mbps)</option>
-          </select>
-      </div>
-
-      <!-- Nova seção para Configurações da VM -->
-      <div class="border-t border-gray-700 pt-6 mt-6">
-          <h2 class="text-xl font-semibold mb-4 text-white">Configurações da VM</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div>
-                  <label class="block text-sm font-medium mb-1">Tipo de Ambiente</label>
-                  <div class="flex items-center space-x-4 mt-2">
-                      <label class="flex items-center cursor-pointer">
-                          <input type="radio" name="ambienteTipo" id="ambienteNovo" value="novo" class="form-radio h-4 w-4 text-secondary focus:ring-secondary border-gray-600 bg-gray-800">
-                          <span class="ml-2">Ambiente Novo</span>
-                      </label>
-                      <label class="flex items-center cursor-pointer">
-                          <input type="radio" name="ambienteTipo" id="ambienteExistente" value="existente" class="form-radio h-4 w-4 text-secondary focus:ring-secondary border-gray-600 bg-gray-800" checked>
-                          <span class="ml-2">Cliente Existente</span>
-                      </label>
-                  </div>
-              </div>
-              <div>
-                  <label for="osSelect" class="block text-sm font-medium mb-1">Sistema Operacional</label>
-                  <select id="osSelect" class="w-full p-2 rounded bg-gray-800 border border-gray-600 text-white focus:ring-secondary focus:border-secondary mt-1">
-                      <option value="linux">Linux</option>
-                      <option value="windows">Windows</option>
-                  </select>
-              </div>
-          </div>
-      </div>
-
-      <h2 class="text-xl font-semibold mb-4 text-white border-t border-gray-700 pt-6">Recursos Computacionais</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-sm font-medium mb-1">vCPU</label>
-          <input type="number" class="item qty-vcpu w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="vCPU" min="0">
-          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="vCPU" value="31.32" step="0.01">
-          <p class="mt-1 text-sm total" data-name="vCPU">Total: R$ 0,00</p>
+    <!-- Configurações Globais -->
+    <div class="border-b border-gray-700 pb-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4 text-white">Configurações Gerais do Ambiente</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium mb-1">Tipo de Ambiente</label>
+                <div class="flex items-center space-x-4 mt-2">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" name="ambienteTipo" id="ambienteNovo" value="novo" class="form-radio h-4 w-4 text-secondary focus:ring-secondary border-gray-600 bg-gray-800">
+                        <span class="ml-2">Ambiente Novo</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" name="ambienteTipo" id="ambienteExistente" value="existente" class="form-radio h-4 w-4 text-secondary focus:ring-secondary border-gray-600 bg-gray-800" checked>
+                        <span class="ml-2">Cliente Existente</span>
+                    </label>
+                </div>
+            </div>
+            <!-- Campo Custo Implementação (será mostrado/oculto via JS) -->
+            <div id="custoImplementacaoContainer" class="hidden">
+                <label for="custoImplementacao" class="block text-sm font-medium mb-1">Custo Implementação (R$)</label>
+                <input type="number" id="custoImplementacao" value="500.00" step="0.01" class="item-price-global w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Custo Implementação">
+                <p class="mt-1 text-xs text-gray-400">Valor sugerido. Ajuste se necessário.</p>
+            </div>
         </div>
+    </div>
 
-        <div>
-          <label class="block text-sm font-medium mb-1">Memória (GB)</label>
-          <input type="number" class="item qty w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Memória" min="0">
-          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Memória" value="4.57" step="0.01">
-          <p class="mt-1 text-sm total" data-name="Memória">Total: R$ 0,00</p>
+    <!-- Container para Múltiplas VMs -->
+    <div id="vmContainer">
+        <!-- VMs serão adicionadas aqui dinamicamente -->
+    </div>
+
+    <!-- Botão para Adicionar VM -->
+    <div class="text-center mt-4 mb-8">
+        <button type="button" id="addVmBtn" class="bg-secondary hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center gap-2 transition duration-300 ease-in-out">
+            <i class="fas fa-plus"></i> Adicionar VM
+        </button>
+    </div>
+
+    <!-- Seção de Serviços Adicionais (Checkboxes) -->
+    <div class="border-t border-gray-700 pt-6 mt-6">
+        <h2 class="text-xl font-semibold mb-4 text-white">Serviços Adicionais / Aplicações</h2>
+        <div id="servicosAdicionaisContainer" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Checkboxes serão adicionados aqui -->
+             <label class="flex items-center cursor-pointer">
+                <input type="checkbox" value="50" class="servico-adicional form-checkbox h-5 w-5 text-secondary focus:ring-secondary border-gray-600 bg-gray-800 rounded" data-name="Gerenciamento BD">
+                <span class="ml-2">Gerenciamento BD (R$ 50/mês)</span>
+            </label>
+             <label class="flex items-center cursor-pointer">
+                <input type="checkbox" value="30" class="servico-adicional form-checkbox h-5 w-5 text-secondary focus:ring-secondary border-gray-600 bg-gray-800 rounded" data-name="Monitoramento Avançado">
+                <span class="ml-2">Monitoramento Avançado (R$ 30/mês)</span>
+            </label>
+             <label class="flex items-center cursor-pointer">
+                <input type="checkbox" value="25" class="servico-adicional form-checkbox h-5 w-5 text-secondary focus:ring-secondary border-gray-600 bg-gray-800 rounded" data-name="Gestão de Patches">
+                <span class="ml-2">Gestão de Patches (R$ 25/mês)</span>
+            </label>
+             <label class="flex items-center cursor-pointer">
+                <input type="checkbox" value="15" class="servico-adicional form-checkbox h-5 w-5 text-secondary focus:ring-secondary border-gray-600 bg-gray-800 rounded" data-name="WordPress Otimizado">
+                <span class="ml-2">WordPress Otimizado (R$ 15/mês)</span>
+            </label>
+             <label class="flex items-center cursor-pointer">
+                <input type="checkbox" value="40" class="servico-adicional form-checkbox h-5 w-5 text-secondary focus:ring-secondary border-gray-600 bg-gray-800 rounded" data-name="Ambiente Docker/K8s">
+                <span class="ml-2">Ambiente Docker/K8s (R$ 40/mês)</span>
+            </label>
+            <!-- Adicionar mais serviços conforme necessário -->
         </div>
+    </div>
 
-        <div>
-          <label class="block text-sm font-medium mb-1">Disco (GB)</label>
-          <input type="number" class="item qty-disco w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Disco" min="0">
-          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Disco" value="0.33" step="0.01">
-          <p class="mt-1 text-sm total" data-name="Disco">Total: R$ 0,00</p>
+    <!-- Resumo Detalhado e Total Geral -->
+    <div class="border-t border-gray-700 pt-6 mt-8 bg-gray-800 p-6 rounded-lg">
+        <h2 class="text-xl font-semibold mb-4 text-white">Resumo do Orçamento</h2>
+        <div id="resumoCustos" class="space-y-2 mb-4 text-sm">
+            <!-- Detalhamento será preenchido aqui -->
+            <p>Custo Total VMs: <span id="custoTotalVms">R$ 0,00</span></p>
+            <p>Custo Licenças (VMware/Windows): <span id="custoTotalLicencas">R$ 0,00</span></p>
+            <p>Custo Backup (Área + Veeam + Custom): <span id="custoTotalBackup">R$ 0,00</span></p>
+            <p>Custo Conectividade (Link + IP): <span id="custoTotalConectividade">R$ 0,00</span></p>
+            <p>Custo Serviços Adicionais: <span id="custoTotalServicos">R$ 0,00</span></p>
+            <p>Custo Implementação: <span id="custoTotalImplementacao">R$ 0,00</span></p>
         </div>
-      </div>
-
-      <h2 class="text-xl font-semibold mb-4 text-white border-t border-gray-700 pt-6">Conectividade e Backup</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-         <div>
-          <label class="block text-sm font-medium mb-1">MBps link de internet</label>
-          <input type="number" class="item qty w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="MBps link de internet" min="0">
-          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="MBps link de internet" value="5.42" step="0.01">
-          <p class="mt-1 text-sm total" data-name="MBps link de internet">Total: R$ 0,00</p>
+        <div class="text-center md:text-left text-2xl font-bold bg-secondary text-darkbg p-4 rounded-lg shadow-inner">
+            Custo Total Mensal Estimado: <span id="grandTotal">R$ 0,00</span>
         </div>
+    </div>
 
-        <div>
-          <label class="block text-sm font-medium mb-1">Alocação de IPv4</label>
-          <input type="number" class="item qty w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Alocação de IPv4" min="0">
-          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Alocação de IPv4" value="24.47" step="0.01">
-          <p class="mt-1 text-sm total" data-name="Alocação de IPv4">Total: R$ 0,00</p>
-        </div>
-
-         <div>
-          <label class="block text-sm font-medium mb-1">Area de backup cloud (GB)</label>
-          <input type="number" class="item qty-backup-area w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Area de backup cloud" min="0" readonly>
-          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Area de backup cloud" value="0.22" step="0.01">
-          <p class="mt-1 text-sm total" data-name="Area de backup cloud">Total: R$ 0,00</p>
-        </div>
-      </div>
-
-      <h2 class="text-xl font-semibold mb-4 text-white border-t border-gray-700 pt-6">Licenciamento</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-sm font-medium mb-1">Licença Veeam backup por VM</label>
-          <input type="number" class="item qty w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Licença Veeam backup por VM" min="0">
-          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Licença Veeam backup por VM" value="45.00" step="0.01">
-          <p class="mt-1 text-sm total" data-name="Licença Veeam backup por VM">Total: R$ 0,00</p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-1">Licença VMware por vCPU</label>
-          <input type="number" class="item qty-vmware w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Licença VMware por vCPU" min="0" readonly>
-          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Licença VMware por vCPU" value="38.58" step="0.01">
-          <p class="mt-1 text-sm total" data-name="Licença VMware por vCPU">Total: R$ 0,00</p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-1">Licença Windows por vCPU</label>
-          <input type="number" class="item qty-windows w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Licença Windows por vCPU" min="0" readonly>
-          <input type="number" placeholder="Valor unitário" class="item-price w-full p-2 mt-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Licença Windows por vCPU" value="59.07" step="0.01">
-          <p class="mt-1 text-sm total" data-name="Licença Windows por vCPU">Total: R$ 0,00</p>
-        </div>
-      </div>
-
-    </form>
-
-    <!-- Total Geral e Botão WhatsApp -->
-    <div class="mt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="text-center md:text-left text-xl font-bold bg-secondary text-darkbg p-4 rounded-lg shadow-inner flex-grow">
-            Total Estimado da VM: <span id="grandTotal">R$ 0,00</span>
-        </div>
-        <!-- Adicionado type="button" para evitar submit do formulário -->
+    <!-- Botões de Ação -->
+    <div class="mt-8 flex flex-col md:flex-row justify-center items-center gap-4">
+        <button type="button" id="exportPdfBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg flex items-center gap-2 transition duration-300 ease-in-out">
+            <i class="fas fa-file-pdf"></i> Exportar para PDF
+        </button>
         <button type="button" id="whatsappBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg flex items-center gap-2 transition duration-300 ease-in-out">
             <i class="fab fa-whatsapp"></i> Enviar Configuração via WhatsApp
         </button>
@@ -156,6 +152,81 @@
 
   </div>
 
+  <!-- Template para VM Individual (oculto) -->
+  <template id="vmTemplate">
+    <div class="vm-block" data-vm-id="">
+        <button type="button" class="remove-vm-btn" title="Remover VM">&times;</button>
+        <h3 class="text-lg font-semibold mb-4 text-secondary">Máquina Virtual <span class="vm-number">1</span></h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">vCPU</label>
+              <input type="number" class="item qty-vcpu w-full p-2 rounded bg-gray-900 border border-gray-600 text-white" data-name="vCPU" min="1" value="1">
+              <input type="hidden" class="item-price" data-name="vCPU" value="31.32">
+              <p class="mt-1 text-xs total" data-name="vCPU">Total: R$ 0,00</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Memória (GB)</label>
+              <input type="number" class="item qty w-full p-2 rounded bg-gray-900 border border-gray-600 text-white" data-name="Memória" min="1" value="2">
+              <input type="hidden" class="item-price" data-name="Memória" value="4.57">
+              <p class="mt-1 text-xs total" data-name="Memória">Total: R$ 0,00</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">Disco (GB)</label>
+              <input type="number" class="item qty-disco w-full p-2 rounded bg-gray-900 border border-gray-600 text-white" data-name="Disco" min="10" value="50">
+              <input type="hidden" class="item-price" data-name="Disco" value="0.33">
+              <p class="mt-1 text-xs total" data-name="Disco">Total: R$ 0,00</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+             <div>
+                <label class="block text-sm font-medium mb-1">Sistema Operacional</label>
+                <select class="osSelect w-full p-2 rounded bg-gray-900 border border-gray-600 text-white focus:ring-secondary focus:border-secondary mt-1">
+                    <option value="linux" selected>Linux</option>
+                    <option value="windows">Windows</option>
+                </select>
+            </div>
+             <div>
+                <label class="block text-sm font-medium mb-1">Licença Veeam</label>
+                 <label class="flex items-center cursor-pointer mt-2">
+                    <input type="checkbox" class="item qty-veeam form-checkbox h-4 w-4 text-secondary focus:ring-secondary border-gray-600 bg-gray-900 rounded" data-name="Licença Veeam backup por VM" value="1">
+                    <span class="ml-2 text-xs">Incluir (R$ 45,00)</span>
+                 </label>
+                <input type="hidden" class="item-price" data-name="Licença Veeam backup por VM" value="45.00">
+                <p class="mt-1 text-xs total" data-name="Licença Veeam backup por VM">Total: R$ 0,00</p>
+            </div>
+             <!-- Licenças VMware e Windows são calculadas automaticamente, não precisam de input direto aqui -->
+             <input type="hidden" class="item qty-vmware" data-name="Licença VMware por vCPU" value="0">
+             <input type="hidden" class="item-price" data-name="Licença VMware por vCPU" value="38.58">
+             <input type="hidden" class="item qty-windows" data-name="Licença Windows por vCPU" value="0">
+             <input type="hidden" class="item-price" data-name="Licença Windows por vCPU" value="59.07">
+             <!-- Area de backup é calculada -->
+             <input type="hidden" class="item qty-backup-area" data-name="Area de backup cloud" value="0">
+             <input type="hidden" class="item-price" data-name="Area de backup cloud" value="0.22">
+        </div>
+         <div class="border-t border-gray-700 pt-4 mt-4">
+            <h4 class="text-md font-semibold mb-2 text-gray-300">Customização de Backup (Opcional)</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" class="backup-custom backup-retencao form-checkbox h-4 w-4 text-secondary focus:ring-secondary border-gray-600 bg-gray-900 rounded" data-cost-multiplier="0.1">
+                    <span class="ml-2 text-xs">Retenção > 15 dias (+10% custo disco)</span>
+                 </label>
+                 <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" class="backup-custom backup-frequencia form-checkbox h-4 w-4 text-secondary focus:ring-secondary border-gray-600 bg-gray-900 rounded" data-cost-multiplier="0.05">
+                    <span class="ml-2 text-xs">Frequência < 12h (+5% custo disco)</span>
+                 </label>
+            </div>
+        </div>
+    </div>
+  </template>
+
+  <!-- Inputs Globais Fixos (ocultos, apenas para manter os valores unitários) -->
+  <div class="hidden">
+      <input type="hidden" class="item-price-global" data-name="MBps link de internet" value="5.42">
+      <input type="hidden" class="item-price-global" data-name="Alocação de IPv4" value="24.47">
+      <!-- Adicionar outros custos fixos globais se necessário -->
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
+
