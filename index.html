@@ -22,17 +22,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <!-- Incluir jsPDF via CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <!-- Opcional: Incluir plugin autoTable para tabelas (se necessário) -->
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script> -->
   <style>
-    /* Estilo para destacar cada bloco de VM */
     .vm-block {
       border: 1px solid #374151; /* gray-700 */
       padding: 1.5rem; /* p-6 */
       border-radius: 0.75rem; /* rounded-xl */
       margin-bottom: 1.5rem; /* mb-6 */
       background-color: #1f2937; /* gray-800 */
-      position: relative; /* Para posicionar o botão de remover */
+      position: relative;
     }
     .remove-vm-btn {
         position: absolute;
@@ -45,13 +42,22 @@
         width: 1.5rem;
         height: 1.5rem;
         font-size: 0.8rem;
-        line-height: 1.5rem; /* Centraliza o ícone */
+        line-height: 1.5rem;
         text-align: center;
         cursor: pointer;
         transition: background-color 0.3s;
     }
     .remove-vm-btn:hover {
         background-color: #dc2626; /* red-600 */
+    }
+    /* Ocultar spinner de inputs numéricos */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
     }
   </style>
 </head>
@@ -83,7 +89,33 @@
                 <input type="number" id="custoImplementacao" value="500.00" step="0.01" class="item-price-global w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" data-name="Custo Implementação">
                 <p class="mt-1 text-xs text-gray-400">Valor sugerido. Ajuste se necessário.</p>
             </div>
+             <!-- Campo Nome Cliente -->
+            <div>
+                <label for="nomeCliente" class="block text-sm font-medium mb-1">Nome do Cliente (Opcional)</label>
+                <input type="text" id="nomeCliente" class="w-full p-2 rounded bg-gray-800 border border-gray-600 text-white" placeholder="Nome para identificação">
+            </div>
+             <!-- Campo Link Dedicado (será mostrado/oculto via JS) -->
+            <div id="linkDedicadoContainer" class="hidden">
+                <label for="linkDedicadoMbps" class="block text-sm font-medium mb-1">Link Dedicado (MBps)</label>
+                <input type="number" id="linkDedicadoMbps" value="1" min="1" step="1" class="w-full p-2 rounded bg-gray-800 border border-gray-600 text-white">
+                <p class="mt-1 text-xs text-gray-400">Mínimo 1 MBps para ambiente novo.</p>
+            </div>
         </div>
+    </div>
+
+    <!-- Seleção de Presets -->
+    <div class="mb-6">
+        <label for="presetSelect" class="block text-sm font-medium mb-1">Aplicar Preset (na primeira VM):</label>
+        <select id="presetSelect" class="w-full md:w-1/2 p-2 rounded bg-gray-800 border border-gray-600 text-white focus:ring-secondary focus:border-secondary mt-1">
+            <option value="">Selecione um Preset...</option>
+            <option value="win1">Preset 1 - Windows (4vCPU/8GB/200GB)</option>
+            <option value="win2">Preset 2 - Windows (6vCPU/12GB/250GB)</option>
+            <option value="win3">Preset 3 - Windows (8vCPU/16GB/350GB)</option>
+            <option value="lin1">Preset 1 - Linux (4vCPU/8GB/200GB)</option>
+            <option value="lin2">Preset 2 - Linux (6vCPU/12GB/250GB)</option>
+            <option value="lin3">Preset 3 - Linux (8vCPU/16GB/350GB)</option>
+            <option value="firewall">Preset Firewall (1vCPU/1GB/10GB)</option>
+        </select>
     </div>
 
     <!-- Container para Múltiplas VMs -->
@@ -98,32 +130,26 @@
         </button>
     </div>
 
-    <!-- Seção de Serviços Adicionais (Checkboxes) -->
+    <!-- Seção de Serviços Adicionais Atualizada -->
     <div class="border-t border-gray-700 pt-6 mt-6">
-        <h2 class="text-xl font-semibold mb-4 text-white">Serviços Adicionais / Aplicações</h2>
+        <h2 class="text-xl font-semibold mb-4 text-white">Serviços Opcionais</h2>
         <div id="servicosAdicionaisContainer" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <!-- Checkboxes serão adicionados aqui -->
              <label class="flex items-center cursor-pointer">
-                <input type="checkbox" value="50" class="servico-adicional form-checkbox h-5 w-5 text-secondary focus:ring-secondary border-gray-600 bg-gray-800 rounded" data-name="Gerenciamento BD">
-                <span class="ml-2">Gerenciamento BD (R$ 50/mês)</span>
+                <input type="checkbox" value="180" class="servico-adicional form-checkbox h-5 w-5 text-secondary focus:ring-secondary border-gray-600 bg-gray-800 rounded" data-name="Monitoramento Ativo de Backup" data-cost-type="monthly">
+                <span class="ml-2">Monitoramento Backup (R$ 180/mês)</span>
             </label>
              <label class="flex items-center cursor-pointer">
-                <input type="checkbox" value="30" class="servico-adicional form-checkbox h-5 w-5 text-secondary focus:ring-secondary border-gray-600 bg-gray-800 rounded" data-name="Monitoramento Avançado">
-                <span class="ml-2">Monitoramento Avançado (R$ 30/mês)</span>
+                <input type="checkbox" value="140" class="servico-adicional form-checkbox h-5 w-5 text-secondary focus:ring-secondary border-gray-600 bg-gray-800 rounded" data-name="Monitoramento Ativo de Uptime de VM" data-cost-type="monthly">
+                <span class="ml-2">Monitoramento Uptime (R$ 140/mês)</span>
             </label>
              <label class="flex items-center cursor-pointer">
-                <input type="checkbox" value="25" class="servico-adicional form-checkbox h-5 w-5 text-secondary focus:ring-secondary border-gray-600 bg-gray-800 rounded" data-name="Gestão de Patches">
-                <span class="ml-2">Gestão de Patches (R$ 25/mês)</span>
+                <input type="checkbox" value="60" class="servico-adicional form-checkbox h-5 w-5 text-secondary focus:ring-secondary border-gray-600 bg-gray-800 rounded" data-name="Monitoramento Ativo de Ambiente" data-cost-type="monthly">
+                <span class="ml-2">Monitoramento Ambiente (R$ 60/mês)</span>
             </label>
              <label class="flex items-center cursor-pointer">
-                <input type="checkbox" value="15" class="servico-adicional form-checkbox h-5 w-5 text-secondary focus:ring-secondary border-gray-600 bg-gray-800 rounded" data-name="WordPress Otimizado">
-                <span class="ml-2">WordPress Otimizado (R$ 15/mês)</span>
+                <input type="checkbox" value="500" class="servico-adicional form-checkbox h-5 w-5 text-secondary focus:ring-secondary border-gray-600 bg-gray-800 rounded" data-name="VPN L2TP" data-cost-type="unique">
+                <span class="ml-2">VPN L2TP (R$ 500 - único)</span>
             </label>
-             <label class="flex items-center cursor-pointer">
-                <input type="checkbox" value="40" class="servico-adicional form-checkbox h-5 w-5 text-secondary focus:ring-secondary border-gray-600 bg-gray-800 rounded" data-name="Ambiente Docker/K8s">
-                <span class="ml-2">Ambiente Docker/K8s (R$ 40/mês)</span>
-            </label>
-            <!-- Adicionar mais serviços conforme necessário -->
         </div>
     </div>
 
@@ -131,16 +157,19 @@
     <div class="border-t border-gray-700 pt-6 mt-8 bg-gray-800 p-6 rounded-lg">
         <h2 class="text-xl font-semibold mb-4 text-white">Resumo do Orçamento</h2>
         <div id="resumoCustos" class="space-y-2 mb-4 text-sm">
-            <!-- Detalhamento será preenchido aqui -->
             <p>Custo Total VMs: <span id="custoTotalVms">R$ 0,00</span></p>
             <p>Custo Licenças (VMware/Windows): <span id="custoTotalLicencas">R$ 0,00</span></p>
             <p>Custo Backup (Área + Veeam + Custom): <span id="custoTotalBackup">R$ 0,00</span></p>
             <p>Custo Conectividade (Link + IP): <span id="custoTotalConectividade">R$ 0,00</span></p>
-            <p>Custo Serviços Adicionais: <span id="custoTotalServicos">R$ 0,00</span></p>
-            <p>Custo Implementação: <span id="custoTotalImplementacao">R$ 0,00</span></p>
+            <p>Custo Serviços Adicionais (Mensal): <span id="custoTotalServicosMensal">R$ 0,00</span></p>
+            <hr class="border-gray-600 my-2">
+            <p class="font-semibold">Custos Únicos (Setup):</p>
+            <p class="pl-4">Custo Implementação: <span id="custoTotalImplementacao">R$ 0,00</span></p>
+            <p class="pl-4">Custo Serviços Adicionais (Único): <span id="custoTotalServicosUnico">R$ 0,00</span></p>
+            <p class="pl-4 font-semibold">Total Custos Únicos: <span id="custoTotalUnico">R$ 0,00</span></p>
         </div>
         <div class="text-center md:text-left text-2xl font-bold bg-secondary text-darkbg p-4 rounded-lg shadow-inner">
-            Custo Total Mensal Estimado: <span id="grandTotal">R$ 0,00</span>
+            Custo Total Mensal Estimado: <span id="grandTotalMensal">R$ 0,00</span>
         </div>
     </div>
 
@@ -170,13 +199,13 @@
             </div>
             <div>
               <label class="block text-sm font-medium mb-1">Memória (GB)</label>
-              <input type="number" class="item qty w-full p-2 rounded bg-gray-900 border border-gray-600 text-white" data-name="Memória" min="1" value="2">
+              <input type="number" class="item qty w-full p-2 rounded bg-gray-900 border border-gray-600 text-white" data-name="Memória" min="1" value="1">
               <input type="hidden" class="item-price" data-name="Memória" value="4.57">
               <p class="mt-1 text-xs total" data-name="Memória">Total: R$ 0,00</p>
             </div>
             <div>
               <label class="block text-sm font-medium mb-1">Disco (GB)</label>
-              <input type="number" class="item qty-disco w-full p-2 rounded bg-gray-900 border border-gray-600 text-white" data-name="Disco" min="10" value="50">
+              <input type="number" class="item qty-disco w-full p-2 rounded bg-gray-900 border border-gray-600 text-white" data-name="Disco" min="10" value="10">
               <input type="hidden" class="item-price" data-name="Disco" value="0.33">
               <p class="mt-1 text-xs total" data-name="Disco">Total: R$ 0,00</p>
             </div>
@@ -191,20 +220,19 @@
             </div>
              <div>
                 <label class="block text-sm font-medium mb-1">Licença Veeam</label>
-                 <label class="flex items-center cursor-pointer mt-2">
-                    <input type="checkbox" class="item qty-veeam form-checkbox h-4 w-4 text-secondary focus:ring-secondary border-gray-600 bg-gray-900 rounded" data-name="Licença Veeam backup por VM" value="1">
-                    <span class="ml-2 text-xs">Incluir (R$ 45,00)</span>
-                 </label>
+                 <div class="mt-2 p-2 bg-gray-700 rounded text-center">
+                    <span class="text-xs font-semibold">Inclusa (R$ 45,00)</span>
+                 </div>
+                <input type="hidden" class="item qty-veeam" data-name="Licença Veeam backup por VM" value="1"> <!-- Sempre 1 -->
                 <input type="hidden" class="item-price" data-name="Licença Veeam backup por VM" value="45.00">
                 <p class="mt-1 text-xs total" data-name="Licença Veeam backup por VM">Total: R$ 0,00</p>
             </div>
-             <!-- Licenças VMware e Windows são calculadas automaticamente, não precisam de input direto aqui -->
+             <!-- Licenças VMware e Windows são calculadas automaticamente -->
              <input type="hidden" class="item qty-vmware" data-name="Licença VMware por vCPU" value="0">
              <input type="hidden" class="item-price" data-name="Licença VMware por vCPU" value="38.58">
              <input type="hidden" class="item qty-windows" data-name="Licença Windows por vCPU" value="0">
              <input type="hidden" class="item-price" data-name="Licença Windows por vCPU" value="59.07">
-             <!-- Area de backup é calculada -->
-             <input type="hidden" class="item qty-backup-area" data-name="Area de backup cloud" value="0">
+             <!-- Area de backup é calculada globalmente -->
              <input type="hidden" class="item-price" data-name="Area de backup cloud" value="0.22">
         </div>
          <div class="border-t border-gray-700 pt-4 mt-4">
@@ -223,13 +251,14 @@
     </div>
   </template>
 
-  <!-- Inputs Globais Fixos (ocultos, apenas para manter os valores unitários) -->
+  <!-- Inputs Globais Fixos (ocultos) -->
   <div class="hidden">
       <input type="hidden" class="item-price-global" data-name="MBps link de internet" value="5.42">
       <input type="hidden" class="item-price-global" data-name="Alocação de IPv4" value="24.47">
-      <!-- Adicionar outros custos fixos globais se necessário -->
+      <input type="hidden" class="item-price-global" data-name="Area de backup cloud" value="0.22"> <!-- Preço unitário da área de backup -->
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
+
