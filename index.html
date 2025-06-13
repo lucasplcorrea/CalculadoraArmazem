@@ -105,7 +105,7 @@
 
     <!-- Seleção de Presets -->
     <div class="mb-6">
-        <label for="presetSelect" class="block text-sm font-medium mb-1">Aplicar Preset:</label>
+        <label for="presetSelect" class="block text-sm font-medium mb-1">Aplicar Preset (na primeira VM):</label>
         <select id="presetSelect" class="w-full md:w-1/2 p-2 rounded bg-gray-800 border border-gray-600 text-white focus:ring-secondary focus:border-secondary mt-1">
             <option value="">Selecione um Preset...</option>
             <option value="win1">Preset 1 - Windows (4vCPU/8GB/200GB)</option>
@@ -194,19 +194,19 @@
             <div>
               <label class="block text-sm font-medium mb-1">vCPU</label>
               <input type="number" class="item qty-vcpu w-full p-2 rounded bg-gray-900 border border-gray-600 text-white" data-name="vCPU" min="1" value="1">
-              <input type="hidden" class="item-price" data-name="vCPU" value="31.32">
+              <input type="hidden" class="item-price" data-name="vCPU" value="30.04">
               <p class="mt-1 text-xs total" data-name="vCPU">Total: R$ 0,00</p>
             </div>
             <div>
               <label class="block text-sm font-medium mb-1">Memória (GB)</label>
               <input type="number" class="item qty w-full p-2 rounded bg-gray-900 border border-gray-600 text-white" data-name="Memória" min="1" value="1">
-              <input type="hidden" class="item-price" data-name="Memória" value="4.57">
+              <input type="hidden" class="item-price" data-name="Memória" value="4.38">
               <p class="mt-1 text-xs total" data-name="Memória">Total: R$ 0,00</p>
             </div>
             <div>
               <label class="block text-sm font-medium mb-1">Disco (GB)</label>
               <input type="number" class="item qty-disco w-full p-2 rounded bg-gray-900 border border-gray-600 text-white" data-name="Disco" min="10" value="10">
-              <input type="hidden" class="item-price" data-name="Disco" value="0.33">
+              <input type="hidden" class="item-price" data-name="Disco" value="0.31">
               <p class="mt-1 text-xs total" data-name="Disco">Total: R$ 0,00</p>
             </div>
         </div>
@@ -221,17 +221,17 @@
              <div>
                 <label class="block text-sm font-medium mb-1">Licença Veeam</label>
                  <div class="mt-2 p-2 bg-gray-700 rounded text-center">
-                    <span class="text-xs font-semibold">Inclusa (R$ 45,00)</span>
+                    <span class="text-xs font-semibold">Inclusa (R$ 43,69)</span>
                  </div>
                 <input type="hidden" class="item qty-veeam" data-name="Licença Veeam backup por VM" value="1"> <!-- Sempre 1 -->
-                <input type="hidden" class="item-price" data-name="Licença Veeam backup por VM" value="45.00">
+                <input type="hidden" class="item-price" data-name="Licença Veeam backup por VM" value="43.69">
                 <p class="mt-1 text-xs total" data-name="Licença Veeam backup por VM">Total: R$ 0,00</p>
             </div>
              <!-- Licenças VMware e Windows são calculadas automaticamente -->
              <input type="hidden" class="item qty-vmware" data-name="Licença VMware por vCPU" value="0">
-             <input type="hidden" class="item-price" data-name="Licença VMware por vCPU" value="38.58">
+             <input type="hidden" class="item-price" data-name="Licença VMware por vCPU" value="37.46">
              <input type="hidden" class="item qty-windows" data-name="Licença Windows por vCPU" value="0">
-             <input type="hidden" class="item-price" data-name="Licença Windows por vCPU" value="59.07">
+             <input type="hidden" class="item-price" data-name="Licença Windows por vCPU" value="58.78">
              <!-- Area de backup é calculada globalmente -->
              <input type="hidden" class="item-price" data-name="Area de backup cloud" value="0.22">
         </div>
@@ -253,12 +253,11 @@
 
   <!-- Inputs Globais Fixos (ocultos) -->
   <div class="hidden">
-      <input type="hidden" class="item-price-global" data-name="MBps link de internet" value="5.42">
-      <input type="hidden" class="item-price-global" data-name="Alocação de IPv4" value="24.47">
+      <input type="hidden" class="item-price-global" data-name="MBps link de internet" value="5.27">
+      <input type="hidden" class="item-price-global" data-name="Alocação de IPv4" value="23.77">
       <input type="hidden" class="item-price-global" data-name="Area de backup cloud" value="0.22"> <!-- Preço unitário da área de backup -->
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
